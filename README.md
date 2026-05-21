@@ -121,7 +121,7 @@ Siga os passos com calma. A ordem importa.
 No Git Bash:
 
 ```bash
-cd "/c/Users/PC/OneDrive/Documentos/ENG/eng. de software - projeto/project"
+cd "C:\Users\[SeuUsuário]\Documents"
 ```
 
 Se voce colocou o projeto em outro lugar, use o caminho da sua pasta.
