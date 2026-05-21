@@ -72,7 +72,7 @@ project/
 
 - `frontend/`: parte visual do sistema, aquilo que aparece no navegador.
 - `backend/`: parte responsavel por receber pedidos do frontend e conversar com o banco.
-- `database.sql`: arquivo usado para criar o banco e a tabela de clientes.
+- `database.sql`: arquivo usado para criar o banco e as tabelas de clientes e produtos.
 - `fontes/` e `icones/`: arquivos visuais usados no layout.
 - `.gitignore`: evita subir arquivos sensiveis ou pesados para o GitHub.
 - `README.md`: este guia.
