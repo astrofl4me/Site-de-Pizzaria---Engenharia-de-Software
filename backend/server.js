@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const clienteRoutes = require("./routes/clienteRoutes");
+const produtoRoutes = require("./routes/produtoRoutes");
 const { testConnection } = require("./db");
 
 const app = express();
@@ -20,6 +21,7 @@ app.get("/api/health", (request, response) => {
 });
 
 app.use("/api/clientes", clienteRoutes);
+app.use("/api/produtos", produtoRoutes);
 
 app.use((request, response) => {
   response.status(404).json({ erro: "Rota não encontrada." });
@@ -44,4 +46,3 @@ async function iniciarServidor() {
 }
 
 iniciarServidor();
-
