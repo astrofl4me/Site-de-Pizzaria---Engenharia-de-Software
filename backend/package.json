@@ -1,0 +1,28 @@
+{
+  "name": "surunga-slice-backend",
+  "version": "1.0.0",
+  "description": "Backend da pizzaria Surunga Slice com CRUD real de clientes usando Express e MySQL.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "express",
+    "mysql",
+    "crud",
+    "pizzaria"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mysql2": "^3.11.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
+

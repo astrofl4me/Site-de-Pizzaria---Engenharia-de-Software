@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surunga Slice</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Fundo decorativo: palavras grandes e ingredientes simples em CSS. -->
+  <div class="home-background" aria-hidden="true">
+    <span>QUEIJO</span>
+    <span>MOLHO</span>
+    <span>CALABRESA</span>
+    <span>OREGANO</span>
+    <span>MASSA</span>
+    <span>PIZZA</span>
+    <span>FORNO</span>
+    <span>ENTREGA</span>
+    <i class="ingredient tomato"></i>
+    <i class="ingredient olive"></i>
+    <i class="ingredient cheese"></i>
+    <i class="ingredient oregano"></i>
+  </div>
+
+  <!-- Topbar simples para telas internas. Ela fica escondida no menu principal. -->
+  <header class="topbar" hidden>
+    <div class="topbar-inner">
+      <div class="brand" aria-label="Surunga Slice">
+        <img class="brand-logo" src="assets/steve-pizza-logo.png" alt="">
+        <div class="brand-copy">
+          <strong>Surunga Slice</strong>
+        </div>
+      </div>
+      <button type="button" id="btnTelaInicial" class="menu-home-button" hidden>Voltar para o menu principal</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <!-- Tela inicial: cartaz de pizzaria com botões de navegação. -->
+    <section id="tela-inicial" class="app-screen home-screen">
+      <section class="poster-menu">
+        <div class="poster-title">
+          <img src="assets/steve-pizza-logo.png" alt="Steve Pizza">
+          <h1>Surunga Slice</h1>
+        </div>
+
+        <section class="module-grid" aria-label="Escolha de telas">
+          <button type="button" class="module-button featured" data-screen-target="clientes">Cadastro de Clientes</button>
+          <button type="button" class="module-button" data-screen-target="pedidos">Pedidos</button>
+          <button type="button" class="module-button" data-screen-target="produtos">Produtos</button>
+          <button type="button" class="module-button" data-screen-target="pagamento">Pagamento</button>
+          <button type="button" class="module-button" data-screen-target="funcionarios">Funcion&aacute;rios</button>
+        </section>
+      </section>
+    </section>
+
+    <!-- CRUD de clientes: IDs mantidos para o JavaScript existente funcionar. -->
+    <section id="tela-clientes" class="app-screen" hidden>
+      <section class="screen-heading">
+        <div>
+          <h1>Cadastro de Clientes</h1>
+        </div>
+      </section>
+
+      <section class="content-grid" aria-label="Cadastro e listagem de clientes">
+        <form id="clienteForm" class="form-card app-card" autocomplete="off">
+          <div class="section-title">
+            <h2 id="formTitle">Novo cliente</h2>
+            <p id="formHint"></p>
+          </div>
+
+          <input type="hidden" id="clienteId">
+
+          <div class="field-group">
+            <label for="nome">Nome</label>
+            <input id="nome" name="nome" type="text" placeholder="Ex: Nicole" maxlength="120" required>
+          </div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="cpf">CPF</label>
+              <input id="cpf" name="cpf" type="text" placeholder="000.000.000-00" maxlength="14" required>
+            </div>
+
+            <div class="field-group">
+              <label for="telefone">Telefone</label>
+              <input id="telefone" name="telefone" type="text" placeholder="(11) 99999-9999" maxlength="20" required>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="endereco">Endere&ccedil;o</label>
+            <input id="endereco" name="endereco" type="text" placeholder="Rua, n&uacute;mero e bairro" maxlength="180" required>
+          </div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="cep">CEP</label>
+              <input id="cep" name="cep" type="text" placeholder="00000-000" maxlength="9" required>
+            </div>
+
+            <div class="field-group small">
+              <label for="estado">Estado</label>
+              <select id="estado" name="estado" required>
+                <option value="">Selecione</option>
+                <option value="AC">AC - Acre</option>
+                <option value="AL">AL - Alagoas</option>
+                <option value="AP">AP - Amap&aacute;</option>
+                <option value="AM">AM - Amazonas</option>
+                <option value="BA">BA - Bahia</option>
+                <option value="CE">CE - Cear&aacute;</option>
+                <option value="DF">DF - Distrito Federal</option>
+                <option value="ES">ES - Esp&iacute;rito Santo</option>
+                <option value="GO">GO - Goi&aacute;s</option>
+                <option value="MA">MA - Maranh&atilde;o</option>
+                <option value="MT">MT - Mato Grosso</option>
+                <option value="MS">MS - Mato Grosso do Sul</option>
+                <option value="MG">MG - Minas Gerais</option>
+                <option value="PA">PA - Par&aacute;</option>
+                <option value="PB">PB - Para&iacute;ba</option>
+                <option value="PR">PR - Paran&aacute;</option>
+                <option value="PE">PE - Pernambuco</option>
+                <option value="PI">PI - Piau&iacute;</option>
+                <option value="RJ">RJ - Rio de Janeiro</option>
+                <option value="RN">RN - Rio Grande do Norte</option>
+                <option value="RS">RS - Rio Grande do Sul</option>
+                <option value="RO">RO - Rond&ocirc;nia</option>
+                <option value="RR">RR - Roraima</option>
+                <option value="SC">SC - Santa Catarina</option>
+                <option value="SP">SP - S&atilde;o Paulo</option>
+                <option value="SE">SE - Sergipe</option>
+                <option value="TO">TO - Tocantins</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" id="btnSalvar" class="btn btn-primary">Inserir</button>
+            <button type="button" id="btnLimpar" class="btn btn-secondary">Limpar</button>
+          </div>
+        </form>
+
+        <section class="table-card app-card">
+          <div class="table-header">
+            <div class="section-title">
+              <h2>Clientes cadastrados</h2>
+              <p id="contadorClientes">Carregando clientes...</p>
+            </div>
+            <button type="button" id="btnRecarregar" class="btn btn-light">Atualizar</button>
+          </div>
+
+          <div id="alerta" class="alert" role="status" aria-live="polite"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>CPF</th>
+                  <th>Telefone</th>
+                  <th>Endere&ccedil;o</th>
+                  <th>CEP</th>
+                  <th>Estado</th>
+                  <th>A&ccedil;&otilde;es</th>
+                </tr>
+              </thead>
+              <tbody id="clientesTabela">
+                <tr>
+                  <td colspan="8" class="empty">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <section id="tela-pedidos" class="app-screen placeholder-screen" hidden>
+      <div class="placeholder-card app-card">
+        <h1>Pedidos</h1>
+        <p>Esta tela ainda ser&aacute; configurada.</p>
+      </div>
+    </section>
+
+    <section id="tela-produtos" class="app-screen placeholder-screen" hidden>
+      <div class="placeholder-card app-card">
+        <h1>Produtos</h1>
+        <p>Esta tela ainda ser&aacute; configurada.</p>
+      </div>
+    </section>
+
+    <section id="tela-pagamento" class="app-screen placeholder-screen" hidden>
+      <div class="placeholder-card app-card">
+        <h1>Pagamento</h1>
+        <p>Esta tela ainda ser&aacute; configurada.</p>
+      </div>
+    </section>
+
+    <section id="tela-funcionarios" class="app-screen placeholder-screen" hidden>
+      <div class="placeholder-card app-card">
+        <h1>Funcionarios</h1>
+        <p>Esta tela ainda ser&aacute; configurada.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
