@@ -1,4 +1,5 @@
 const API_URL = "/api/clientes";
+const PRODUTOS_API_URL = "/api/produtos";
 
 const form = document.getElementById("clienteForm");
 const clienteIdInput = document.getElementById("clienteId");
@@ -20,10 +21,27 @@ const topbar = document.querySelector(".topbar");
 const btnTelaInicial = document.getElementById("btnTelaInicial");
 const telas = document.querySelectorAll(".app-screen");
 const botoesNavegacao = document.querySelectorAll("[data-screen-target]");
+const produtoForm = document.getElementById("produtoForm");
+const produtoIdInput = document.getElementById("produtoId");
+const produtoNomeInput = document.getElementById("produtoNome");
+const produtoCategoriaInput = document.getElementById("produtoCategoria");
+const produtoPrecoInput = document.getElementById("produtoPreco");
+const produtoDescricaoInput = document.getElementById("produtoDescricao");
+const btnSalvarProduto = document.getElementById("btnSalvarProduto");
+const btnLimparProduto = document.getElementById("btnLimparProduto");
+const produtosTabela = document.getElementById("produtosTabela");
+const produtoContador = document.getElementById("produtoContador");
+const produtoAlerta = document.getElementById("produtoAlerta");
+const listaSabores = document.getElementById("listaSabores");
+const listaBebidas = document.getElementById("listaBebidas");
+const listaSobremesas = document.getElementById("listaSobremesas");
 
 let clientes = [];
 let alertaTimer = null;
 let clientesCarregados = false;
+let produtoAlertaTimer = null;
+let produtos = [];
+let produtosCarregados = false;
 
 function apenasNumeros(valor) {
   return String(valor || "").replace(/\D/g, "");
@@ -75,6 +93,24 @@ function escaparHTML(valor) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function formatarMoeda(valor) {
+  return Number(valor || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
+
+function mostrarAlertaProduto(mensagem, tipo = "success") {
+  clearTimeout(produtoAlertaTimer);
+  produtoAlerta.textContent = mensagem;
+  produtoAlerta.className = `alert show ${tipo}`;
+
+  produtoAlertaTimer = setTimeout(() => {
+    produtoAlerta.className = "alert";
+    produtoAlerta.textContent = "";
+  }, 3000);
 }
 
 function obterDadosFormulario() {
@@ -210,6 +246,173 @@ function mostrarTela(nomeTela) {
   if (nomeTela === "clientes" && !clientesCarregados) {
     carregarClientes();
   }
+
+  if (nomeTela === "produtos" && !produtosCarregados) {
+    carregarProdutos();
+  }
+}
+
+function obterDadosProduto() {
+  return {
+    nome: produtoNomeInput.value.trim(),
+    categoria: produtoCategoriaInput.value,
+    preco: Number(produtoPrecoInput.value),
+    descricao: produtoDescricaoInput.value.trim()
+  };
+}
+
+function validarProduto(produto) {
+  if (produto.nome.length < 2) {
+    return "Informe o nome do produto.";
+  }
+
+  if (!produto.categoria) {
+    return "Selecione a categoria.";
+  }
+
+  if (!Number.isFinite(produto.preco) || produto.preco <= 0) {
+    return "Informe um preco valido.";
+  }
+
+  return "";
+}
+
+function resetarProdutoFormulario() {
+  produtoForm.reset();
+  produtoIdInput.value = "";
+  btnSalvarProduto.textContent = "Inserir";
+  produtoNomeInput.focus();
+}
+
+function renderizarListaCategoria(elemento, categoria) {
+  const itens = produtos.filter((produto) => produto.categoria === categoria);
+
+  if (itens.length === 0) {
+    elemento.innerHTML = '<li class="empty-menu-item">Nada cadastrado</li>';
+    return;
+  }
+
+  elemento.innerHTML = itens.map((produto) => `
+    <li>
+      <span>${escaparHTML(produto.nome)}</span>
+      <strong>${formatarMoeda(produto.preco)}</strong>
+    </li>
+  `).join("");
+}
+
+function renderizarProdutos() {
+  produtoContador.textContent = `${produtos.length} produto${produtos.length === 1 ? "" : "s"} cadastrado${produtos.length === 1 ? "" : "s"}`;
+
+  renderizarListaCategoria(listaSabores, "Sabores");
+  renderizarListaCategoria(listaBebidas, "Bebidas");
+  renderizarListaCategoria(listaSobremesas, "Sobremesas");
+
+  if (produtos.length === 0) {
+    produtosTabela.innerHTML = '<tr><td colspan="6" class="empty">Nenhum produto cadastrado ainda.</td></tr>';
+    return;
+  }
+
+  produtosTabela.innerHTML = produtos.map((produto) => `
+    <tr>
+      <td>${produto.id}</td>
+      <td>${escaparHTML(produto.nome)}</td>
+      <td>${escaparHTML(produto.categoria)}</td>
+      <td>${formatarMoeda(produto.preco)}</td>
+      <td>${escaparHTML(produto.descricao || "-")}</td>
+      <td>
+        <div class="cell-actions">
+          <button type="button" class="btn btn-edit" data-produto-action="edit" data-id="${produto.id}">Editar</button>
+          <button type="button" class="btn btn-delete" data-produto-action="delete" data-id="${produto.id}">Remover</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+}
+
+async function carregarProdutos() {
+  try {
+    produtoContador.textContent = "Carregando produtos...";
+    const response = await fetch(PRODUTOS_API_URL);
+    produtos = await tratarResposta(response);
+    produtosCarregados = true;
+    renderizarProdutos();
+  } catch (error) {
+    produtos = [];
+    produtosCarregados = false;
+    renderizarProdutos();
+    mostrarAlertaProduto(error.message, "error");
+  }
+}
+
+function preencherProdutoFormulario(produto) {
+  produtoIdInput.value = produto.id;
+  produtoNomeInput.value = produto.nome;
+  produtoCategoriaInput.value = produto.categoria;
+  produtoPrecoInput.value = produto.preco;
+  produtoDescricaoInput.value = produto.descricao;
+  btnSalvarProduto.textContent = "Atualizar";
+  produtoNomeInput.focus();
+}
+
+async function salvarProduto(event) {
+  event.preventDefault();
+
+  const produto = obterDadosProduto();
+  const erro = validarProduto(produto);
+
+  if (erro) {
+    mostrarAlertaProduto(erro, "error");
+    return;
+  }
+
+  const id = produtoIdInput.value;
+
+  const editando = Boolean(id);
+
+  try {
+    btnSalvarProduto.disabled = true;
+    btnSalvarProduto.textContent = editando ? "Atualizando..." : "Inserindo...";
+
+    const response = await fetch(editando ? `${PRODUTOS_API_URL}/${id}` : PRODUTOS_API_URL, {
+      method: editando ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(produto)
+    });
+
+    await tratarResposta(response);
+    await carregarProdutos();
+    resetarProdutoFormulario();
+    mostrarAlertaProduto(editando ? "Produto atualizado com sucesso." : "Produto cadastrado com sucesso.");
+  } catch (error) {
+    btnSalvarProduto.textContent = editando ? "Atualizar" : "Inserir";
+    mostrarAlertaProduto(error.message, "error");
+  } finally {
+    btnSalvarProduto.disabled = false;
+  }
+}
+
+async function removerProduto(id) {
+  const produto = produtos.find((item) => Number(item.id) === Number(id));
+  const nome = produto ? produto.nome : "este produto";
+
+  if (!confirm(`Deseja remover ${nome}?`)) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${PRODUTOS_API_URL}/${id}`, {
+      method: "DELETE"
+    });
+
+    await tratarResposta(response);
+    await carregarProdutos();
+    resetarProdutoFormulario();
+    mostrarAlertaProduto("Produto removido com sucesso.");
+  } catch (error) {
+    mostrarAlertaProduto(error.message, "error");
+  }
 }
 
 async function salvarCliente(event) {
@@ -314,6 +517,29 @@ tabela.addEventListener("click", (event) => {
   }
 });
 
+produtoForm.addEventListener("submit", salvarProduto);
+
+btnLimparProduto.addEventListener("click", resetarProdutoFormulario);
+
+produtosTabela.addEventListener("click", (event) => {
+  const botao = event.target.closest("button[data-produto-action]");
+
+  if (!botao) {
+    return;
+  }
+
+  const id = Number(botao.dataset.id);
+  const produto = produtos.find((item) => Number(item.id) === id);
+
+  if (botao.dataset.produtoAction === "edit" && produto) {
+    preencherProdutoFormulario(produto);
+  }
+
+  if (botao.dataset.produtoAction === "delete") {
+    removerProduto(id);
+  }
+});
+
 cpfInput.addEventListener("input", () => {
   cpfInput.value = formatarCPF(cpfInput.value);
 });
@@ -328,4 +554,5 @@ cepInput.addEventListener("input", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   mostrarTela("inicial");
+  renderizarProdutos();
 });

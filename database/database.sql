@@ -20,3 +20,16 @@ CREATE TABLE IF NOT EXISTS clientes (
   CONSTRAINT chk_clientes_estado CHECK (CHAR_LENGTH(TRIM(estado)) = 2)
 );
 
+CREATE TABLE IF NOT EXISTS produtos (
+  id INT NOT NULL AUTO_INCREMENT,
+  nome VARCHAR(80) NOT NULL,
+  categoria ENUM('Sabores', 'Bebidas', 'Sobremesas') NOT NULL,
+  preco DECIMAL(10, 2) NOT NULL,
+  descricao VARCHAR(120) NULL,
+  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_produtos_nome_categoria (nome, categoria),
+  CONSTRAINT chk_produtos_nome CHECK (CHAR_LENGTH(TRIM(nome)) >= 2),
+  CONSTRAINT chk_produtos_preco CHECK (preco > 0)
+);

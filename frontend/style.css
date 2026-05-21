@@ -62,7 +62,7 @@ body {
     linear-gradient(135deg, #b80000 0%, #e50909 52%, #e50909 100%);
 }
 
-/* Fundo da tela inicial: palavras e ingredientes discretos */
+/* Fundo decorativo: palavras alinhadas como um cartaz de pizzaria */
 .home-background {
   position: fixed;
   inset: 0;
@@ -71,69 +71,27 @@ body {
   pointer-events: none;
 }
 
-.home-background span {
+.home-background .word-row {
   position: absolute;
-  color: rgba(17, 17, 17, 0.14);
+  color: rgba(75, 0, 28, 0.22);
   font-family: "Pasta Pizza", cursive;
-  font-size: clamp(4rem, 10vw, 9rem);
-  line-height: 0.8;
+  font-size: clamp(3.7rem, 7.4vw, 8rem);
+  line-height: 0.78;
   text-transform: uppercase;
   white-space: nowrap;
+  text-shadow: 4px 4px 0 rgba(184, 0, 0, 0.22);
 }
 
-.home-background span:nth-child(1) { top: 8%; left: -2%; }
-.home-background span:nth-child(2) { top: 24%; right: -4%; }
-.home-background span:nth-child(3) { top: 38%; left: 6%; }
-.home-background span:nth-child(4) { top: 52%; right: 8%; }
-.home-background span:nth-child(5) { bottom: 18%; left: -4%; }
-.home-background span:nth-child(6) { bottom: 8%; right: 4%; }
-.home-background span:nth-child(7) { top: 66%; left: 34%; }
-.home-background span:nth-child(8) { top: 15%; left: 42%; }
-
-.ingredient {
-  position: absolute;
-  display: block;
-  opacity: 0.26;
-}
-
-.tomato {
-  width: 74px;
-  height: 74px;
-  left: 12%;
-  bottom: 22%;
-  background: var(--red);
-  border: 8px solid rgba(17, 17, 17, 0.18);
-  border-radius: 50%;
-}
-
-.olive {
-  width: 54px;
-  height: 54px;
-  top: 28%;
-  left: 20%;
-  border: 12px solid var(--black);
-  border-radius: 50%;
-}
-
-.cheese {
-  width: 0;
-  height: 0;
-  right: 18%;
-  bottom: 26%;
-  border-right: 42px solid transparent;
-  border-bottom: 78px solid var(--yellow);
-  border-left: 42px solid transparent;
-  transform: rotate(18deg);
-}
-
-.oregano {
-  width: 100px;
-  height: 18px;
-  top: 72%;
-  right: 30%;
-  background: repeating-linear-gradient(90deg, #143d18 0 8px, transparent 8px 16px);
-  border-radius: 999px;
-}
+.home-background .word-row:nth-child(1) { top: -4%; left: -7%; }
+.home-background .word-row:nth-child(2) { top: 8%; left: -18%; opacity: 0.18; }
+.home-background .word-row:nth-child(3) { top: 18%; left: -8%; }
+.home-background .word-row:nth-child(4) { top: 29%; left: -20%; opacity: 0.18; }
+.home-background .word-row:nth-child(5) { top: 39%; left: -10%; }
+.home-background .word-row:nth-child(6) { top: 50%; left: -22%; opacity: 0.18; }
+.home-background .word-row:nth-child(7) { top: 60%; left: -8%; }
+.home-background .word-row:nth-child(8) { top: 71%; left: -21%; opacity: 0.18; }
+.home-background .word-row:nth-child(9) { top: 81%; left: -9%; }
+.home-background .word-row:nth-child(10) { top: 92%; left: -20%; opacity: 0.18; }
 
 .page {
   position: relative;
@@ -166,7 +124,7 @@ body {
   max-width: 820px;
   align-items: center;
   justify-content: center;
-  gap: clamp(4px, 1vw, 12px);
+  gap: 0;
   margin: 0 auto 28px;
   padding: 0;
   color: var(--cream);
@@ -178,8 +136,8 @@ body {
 }
 
 .poster-title img {
-  width: clamp(150px, 20vw, 250px);
-  height: clamp(110px, 15vw, 185px);
+  width: clamp(170px, 22vw, 280px);
+  height: clamp(122px, 16.5vw, 205px);
   object-fit: contain;
   filter: drop-shadow(4px 5px 0 rgba(17, 17, 17, 0.34));
   transform: translateY(8px);
@@ -190,9 +148,10 @@ body {
   font-family: "Pasta Pizza", cursive;
   font-size: clamp(3.2rem, 9vw, 7.2rem);
   font-weight: 400;
-  line-height: 0.88;
+  line-height: 0.98;
   text-align: center;
   text-shadow: 5px 5px 0 rgba(70, 0, 28, 0.56);
+  transform: translateX(-18px);
 }
 
 .module-grid {
@@ -393,11 +352,27 @@ p {
   align-items: start;
 }
 
+.product-layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 360px) minmax(640px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
 .form-card {
   padding: 22px;
 }
 
+.product-form {
+  padding: 22px;
+}
+
 .table-card {
+  overflow: hidden;
+  min-width: 0;
+}
+
+.menu-board {
   overflow: hidden;
   min-width: 0;
 }
@@ -420,6 +395,54 @@ p {
 
 .section-title p:empty {
   display: none;
+}
+
+.category-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0 20px 18px;
+}
+
+.category-board article {
+  min-height: 150px;
+  padding: 14px;
+  background: #fff7df;
+  border: 3px solid var(--black);
+  border-radius: 18px;
+  box-shadow: 4px 4px 0 rgba(17, 17, 17, 0.18);
+}
+
+.category-board h3 {
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid rgba(17, 17, 17, 0.18);
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+
+.category-board ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.category-board li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.94rem;
+}
+
+.category-board strong {
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.empty-menu-item {
+  color: var(--muted);
 }
 
 .field-group {
@@ -538,6 +561,31 @@ table {
   border-collapse: collapse;
 }
 
+.products-table th:nth-child(1),
+.products-table td:nth-child(1) {
+  width: 42px;
+}
+
+.products-table th:nth-child(2),
+.products-table td:nth-child(2) {
+  width: 150px;
+}
+
+.products-table th:nth-child(3),
+.products-table td:nth-child(3) {
+  width: 110px;
+}
+
+.products-table th:nth-child(4),
+.products-table td:nth-child(4) {
+  width: 90px;
+}
+
+.products-table th:nth-child(6),
+.products-table td:nth-child(6) {
+  width: 170px;
+}
+
 th,
 td {
   padding: 14px 12px;
@@ -632,7 +680,8 @@ tbody tr:hover {
 
 /* Responsividade simples para notebook, tablet e celular */
 @media (max-width: 1180px) {
-  .content-grid {
+  .content-grid,
+  .product-layout {
     grid-template-columns: 1fr;
   }
 }
@@ -648,7 +697,8 @@ tbody tr:hover {
   }
 
   .module-grid,
-  .form-row {
+  .form-row,
+  .category-board {
     grid-template-columns: 1fr;
   }
 

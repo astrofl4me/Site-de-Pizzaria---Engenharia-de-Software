@@ -15,12 +15,14 @@ Atualmente, o sistema permite:
 - listar clientes cadastrados;
 - editar informacoes de clientes;
 - remover clientes;
+- cadastrar produtos do cardapio;
+- listar produtos por categoria;
+- editar e remover produtos;
 - salvar os dados em um banco MySQL.
 
 Algumas telas ja aparecem no menu, mas ainda estao preparadas como modulos futuros:
 
 - Pedidos
-- Produtos
 - Pagamento
 - Funcionarios
 
@@ -155,7 +157,7 @@ Depois digite a senha do seu MySQL.
 3. Abra o arquivo `database.sql`.
 4. Execute o script.
 
-Esse script cria o banco `surunga_slice` e a tabela `clientes`.
+Esse script cria o banco `surunga_slice` e as tabelas `clientes` e `produtos`.
 
 ---
 
@@ -255,6 +257,11 @@ GET    /api/clientes
 POST   /api/clientes
 PUT    /api/clientes/:id
 DELETE /api/clientes/:id
+
+GET    /api/produtos
+POST   /api/produtos
+PUT    /api/produtos/:id
+DELETE /api/produtos/:id
 ```
 
 Para testar se o servidor esta funcionando, abra:
@@ -282,6 +289,16 @@ Se aparecer uma resposta com status `ok`, o backend esta rodando.
 5. O cliente aparece na tabela.
 6. Use **Editar** para alterar um cadastro.
 7. Use **Remover** para excluir um cadastro.
+
+Na tela **Cardapio**, voce tambem pode:
+
+1. Cadastrar um produto.
+2. Escolher a categoria:
+   - Sabores
+   - Bebidas
+   - Sobremesas
+3. Informar preco e descricao.
+4. Editar ou remover produtos cadastrados.
 
 ---
 
@@ -400,13 +417,13 @@ Concluido ate o momento:
 - Interface inicial
 - Navegacao entre modulos
 - CRUD de clientes
+- CRUD de produtos/cardapio
 - Integracao com MySQL
 - Layout personalizado da pizzaria
 
 Planejado para o futuro:
 
 - Modulo de pedidos
-- Modulo de produtos
 - Modulo de pagamentos
 - Modulo de funcionarios
 

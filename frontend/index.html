@@ -9,18 +9,16 @@
 <body>
   <!-- Fundo decorativo: palavras grandes e ingredientes simples em CSS. -->
   <div class="home-background" aria-hidden="true">
-    <span>QUEIJO</span>
-    <span>MOLHO</span>
-    <span>CALABRESA</span>
-    <span>OREGANO</span>
-    <span>MASSA</span>
-    <span>PIZZA</span>
-    <span>FORNO</span>
-    <span>ENTREGA</span>
-    <i class="ingredient tomato"></i>
-    <i class="ingredient olive"></i>
-    <i class="ingredient cheese"></i>
-    <i class="ingredient oregano"></i>
+    <span class="word-row">QUEIJO MOLHO CALABRESA OREGANO MASSA PIZZA FORNO ENTREGA QUEIJO MOLHO</span>
+    <span class="word-row">PORTUGUESA FRANGO CEBOLA CHEDDAR CATUPIRY PRESUNTO PALMITO BACON</span>
+    <span class="word-row">MUSSARELA BORDA MANJERICAO PEPPERONI FATIA CARDAPIO PIZZARIA DELIVERY</span>
+    <span class="word-row">TOMATE AZEITONA RECHEIO QUENTINHA FAMILIA PARMESAO NAPOLITANA</span>
+    <span class="word-row">CALABRESA OREGANO MASSA PIZZA FORNO ENTREGA QUEIJO MOLHO FRANGO</span>
+    <span class="word-row">CHEDDAR CATUPIRY PORTUGUESA CEBOLA BACON PALMITO PRESUNTO MUSSARELA</span>
+    <span class="word-row">PIZZARIA DELIVERY CARDAPIO FATIA PEPPERONI MANJERICAO BORDA TOMATE</span>
+    <span class="word-row">QUATRO QUEIJOS DOCE RECHEIO AZEITONA PARMESAO NAPOLITANA QUENTINHA</span>
+    <span class="word-row">MOLHO QUEIJO FORNO PIZZA MASSA OREGANO CALABRESA ENTREGA FAMILIA</span>
+    <span class="word-row">FRANGO CEBOLA CHEDDAR CATUPIRY BACON PORTUGUESA PALMITO PRESUNTO</span>
   </div>
 
   <!-- Topbar simples para telas internas. Ela fica escondida no menu principal. -->
@@ -48,7 +46,7 @@
         <section class="module-grid" aria-label="Escolha de telas">
           <button type="button" class="module-button featured" data-screen-target="clientes">Cadastro de Clientes</button>
           <button type="button" class="module-button" data-screen-target="pedidos">Pedidos</button>
-          <button type="button" class="module-button" data-screen-target="produtos">Produtos</button>
+          <button type="button" class="module-button" data-screen-target="produtos">Cardápio</button>
           <button type="button" class="module-button" data-screen-target="pagamento">Pagamento</button>
           <button type="button" class="module-button" data-screen-target="funcionarios">Funcion&aacute;rios</button>
         </section>
@@ -184,11 +182,100 @@
       </div>
     </section>
 
-    <section id="tela-produtos" class="app-screen placeholder-screen" hidden>
-      <div class="placeholder-card app-card">
-        <h1>Produtos</h1>
-        <p>Esta tela ainda ser&aacute; configurada.</p>
-      </div>
+    <section id="tela-produtos" class="app-screen" hidden>
+      <section class="screen-heading">
+        <div>
+          <h1>Cardápio</h1>
+        </div>
+      </section>
+
+      <section class="product-layout" aria-label="Cadastro e cardapio de produtos">
+        <form id="produtoForm" class="product-form app-card" autocomplete="off">
+          <div class="section-title">
+            <h2>Novo produto</h2>
+          </div>
+
+          <input type="hidden" id="produtoId">
+
+          <div class="field-group">
+            <label for="produtoNome">Nome do produto</label>
+            <input id="produtoNome" name="produtoNome" type="text" placeholder="Ex: Calabresa" maxlength="80" required>
+          </div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="produtoCategoria">Categoria</label>
+              <select id="produtoCategoria" name="produtoCategoria" required>
+                <option value="">Selecione</option>
+                <option value="Sabores">Sabores de pizza</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Sobremesas">Sobremesas</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="produtoPreco">Preco</label>
+              <input id="produtoPreco" name="produtoPreco" type="number" min="0" step="0.01" placeholder="Ex: 45.00" required>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="produtoDescricao">Descricao curta</label>
+            <input id="produtoDescricao" name="produtoDescricao" type="text" placeholder="Ex: Mussarela, tomate e oregano" maxlength="120">
+          </div>
+
+          <div class="actions">
+            <button type="submit" id="btnSalvarProduto" class="btn btn-primary">Inserir</button>
+            <button type="button" id="btnLimparProduto" class="btn btn-secondary">Limpar</button>
+          </div>
+        </form>
+
+        <section class="menu-board app-card">
+          <div class="table-header">
+            <div class="section-title">
+              <h2>Produtos cadastrados</h2>
+              <p id="produtoContador">0 produtos cadastrados</p>
+            </div>
+          </div>
+
+          <div id="produtoAlerta" class="alert" role="status" aria-live="polite"></div>
+
+          <div class="category-board" aria-label="Resumo do cardapio">
+            <article>
+              <h3>Sabores</h3>
+              <ul id="listaSabores"></ul>
+            </article>
+            <article>
+              <h3>Bebidas</h3>
+              <ul id="listaBebidas"></ul>
+            </article>
+            <article>
+              <h3>Sobremesas</h3>
+              <ul id="listaSobremesas"></ul>
+            </article>
+          </div>
+
+          <div class="table-wrap products-table-wrap">
+            <table class="products-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Produto</th>
+                  <th>Categoria</th>
+                  <th>Preco</th>
+                  <th>Descricao</th>
+                  <th>Acoes</th>
+                </tr>
+              </thead>
+              <tbody id="produtosTabela">
+                <tr>
+                  <td colspan="6" class="empty">Nenhum produto cadastrado ainda.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
     </section>
 
     <section id="tela-pagamento" class="app-screen placeholder-screen" hidden>
