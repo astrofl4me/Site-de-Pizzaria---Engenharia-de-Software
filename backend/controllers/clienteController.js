@@ -13,9 +13,7 @@ function normalizarCliente(body) {
     nome: limparTexto(body.nome),
     cpf: somenteNumeros(body.cpf),
     telefone: limparTexto(body.telefone),
-    endereco: limparTexto(body.endereco),
-    cep: somenteNumeros(body.cep),
-    estado: limparTexto(body.estado).toUpperCase()
+    email: limparTexto(body.email).toLowerCase()
   };
 }
 
@@ -27,23 +25,15 @@ function validarCliente(cliente) {
   }
 
   if (cliente.cpf.length !== 11) {
-    erros.push("CPF deve conter 11 números.");
+    erros.push("CPF deve conter 11 numeros.");
   }
 
   if (cliente.telefone.length < 8) {
     erros.push("Telefone deve ter pelo menos 8 caracteres.");
   }
 
-  if (cliente.endereco.length < 5) {
-    erros.push("Endereço deve ter pelo menos 5 caracteres.");
-  }
-
-  if (cliente.cep.length !== 8) {
-    erros.push("CEP deve conter 8 números.");
-  }
-
-  if (!/^[A-Z]{2}$/.test(cliente.estado)) {
-    erros.push("Estado deve conter exatamente 2 letras. Exemplo: SP.");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cliente.email)) {
+    erros.push("Email deve ser valido.");
   }
 
   return erros;
@@ -52,7 +42,7 @@ function validarCliente(cliente) {
 function tratarErroMySQL(error, response) {
   if (error && error.code === "ER_DUP_ENTRY") {
     return response.status(409).json({
-      erro: "Já existe um cliente cadastrado com este CPF."
+      erro: "Ja existe um cliente cadastrado com este CPF ou email."
     });
   }
 
@@ -76,13 +66,13 @@ async function buscarPorId(request, response) {
     const id = Number(request.params.id);
 
     if (!Number.isInteger(id) || id <= 0) {
-      return response.status(400).json({ erro: "ID inválido." });
+      return response.status(400).json({ erro: "ID invalido." });
     }
 
     const cliente = await Cliente.buscarClientePorId(id);
 
     if (!cliente) {
-      return response.status(404).json({ erro: "Cliente não encontrado." });
+      return response.status(404).json({ erro: "Cliente nao encontrado." });
     }
 
     return response.json(cliente);
@@ -112,7 +102,7 @@ async function atualizar(request, response) {
     const id = Number(request.params.id);
 
     if (!Number.isInteger(id) || id <= 0) {
-      return response.status(400).json({ erro: "ID inválido." });
+      return response.status(400).json({ erro: "ID invalido." });
     }
 
     const cliente = normalizarCliente(request.body);
@@ -125,7 +115,7 @@ async function atualizar(request, response) {
     const clienteAtualizado = await Cliente.atualizarCliente(id, cliente);
 
     if (!clienteAtualizado) {
-      return response.status(404).json({ erro: "Cliente não encontrado." });
+      return response.status(404).json({ erro: "Cliente nao encontrado." });
     }
 
     return response.json(clienteAtualizado);
@@ -139,13 +129,13 @@ async function remover(request, response) {
     const id = Number(request.params.id);
 
     if (!Number.isInteger(id) || id <= 0) {
-      return response.status(400).json({ erro: "ID inválido." });
+      return response.status(400).json({ erro: "ID invalido." });
     }
 
     const removido = await Cliente.removerCliente(id);
 
     if (!removido) {
-      return response.status(404).json({ erro: "Cliente não encontrado." });
+      return response.status(404).json({ erro: "Cliente nao encontrado." });
     }
 
     return response.json({ mensagem: "Cliente removido com sucesso." });
@@ -161,4 +151,3 @@ module.exports = {
   atualizar,
   remover
 };
-
