@@ -6,9 +6,7 @@ const clienteIdInput = document.getElementById("clienteId");
 const nomeInput = document.getElementById("nome");
 const cpfInput = document.getElementById("cpf");
 const telefoneInput = document.getElementById("telefone");
-const enderecoInput = document.getElementById("endereco");
-const cepInput = document.getElementById("cep");
-const estadoInput = document.getElementById("estado");
+const emailInput = document.getElementById("email");
 const btnSalvar = document.getElementById("btnSalvar");
 const btnLimpar = document.getElementById("btnLimpar");
 const btnRecarregar = document.getElementById("btnRecarregar");
@@ -53,12 +51,6 @@ function formatarCPF(valor) {
     .replace(/(\d{3})(\d)/, "$1.$2")
     .replace(/(\d{3})(\d)/, "$1.$2")
     .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-}
-
-function formatarCEP(valor) {
-  return apenasNumeros(valor)
-    .slice(0, 8)
-    .replace(/(\d{5})(\d)/, "$1-$2");
 }
 
 function formatarTelefone(valor) {
@@ -118,9 +110,7 @@ function obterDadosFormulario() {
     nome: nomeInput.value.trim(),
     cpf: apenasNumeros(cpfInput.value),
     telefone: telefoneInput.value.trim(),
-    endereco: enderecoInput.value.trim(),
-    cep: apenasNumeros(cepInput.value),
-    estado: estadoInput.value.trim().toUpperCase()
+    email: emailInput.value.trim().toLowerCase()
   };
 }
 
@@ -137,16 +127,8 @@ function validarFormulario(cliente) {
     return "Informe um telefone válido.";
   }
 
-  if (cliente.endereco.length < 5) {
-    return "Informe um endereço válido.";
-  }
-
-  if (cliente.cep.length !== 8) {
-    return "Informe um CEP com 8 números.";
-  }
-
-  if (!/^[A-Z]{2}$/.test(cliente.estado)) {
-    return "Selecione um estado.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cliente.email)) {
+    return "Informe um email válido.";
   }
 
   return "";
@@ -166,9 +148,7 @@ function preencherFormulario(cliente) {
   nomeInput.value = cliente.nome;
   cpfInput.value = formatarCPF(cliente.cpf);
   telefoneInput.value = formatarTelefone(cliente.telefone);
-  enderecoInput.value = cliente.endereco;
-  cepInput.value = formatarCEP(cliente.cep);
-  estadoInput.value = cliente.estado;
+  emailInput.value = cliente.email;
   btnSalvar.textContent = "Atualizar";
   formTitle.textContent = "Editar cliente";
   formHint.textContent = `Alterando cadastro #${cliente.id}.`;
@@ -180,7 +160,7 @@ function renderizarTabela() {
   contadorClientes.textContent = `${clientes.length} cliente${clientes.length === 1 ? "" : "s"} cadastrado${clientes.length === 1 ? "" : "s"}`;
 
   if (clientes.length === 0) {
-    tabela.innerHTML = '<tr><td colspan="8" class="empty">Nenhum cliente cadastrado ainda.</td></tr>';
+    tabela.innerHTML = '<tr><td colspan="6" class="empty">Nenhum cliente cadastrado ainda.</td></tr>';
     return;
   }
 
@@ -190,9 +170,7 @@ function renderizarTabela() {
       <td>${escaparHTML(cliente.nome)}</td>
       <td>${formatarCPF(cliente.cpf)}</td>
       <td>${escaparHTML(formatarTelefone(cliente.telefone))}</td>
-      <td>${escaparHTML(cliente.endereco)}</td>
-      <td>${formatarCEP(cliente.cep)}</td>
-      <td>${escaparHTML(cliente.estado)}</td>
+      <td>${escaparHTML(cliente.email)}</td>
       <td>
         <div class="cell-actions">
           <button type="button" class="btn btn-edit" data-action="edit" data-id="${cliente.id}">Editar</button>
@@ -546,10 +524,6 @@ cpfInput.addEventListener("input", () => {
 
 telefoneInput.addEventListener("input", () => {
   telefoneInput.value = formatarTelefone(telefoneInput.value);
-});
-
-cepInput.addEventListener("input", () => {
-  cepInput.value = formatarCEP(cepInput.value);
 });
 
 document.addEventListener("DOMContentLoaded", () => {

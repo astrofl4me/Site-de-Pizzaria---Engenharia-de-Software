@@ -648,6 +648,36 @@ td:nth-child(8) {
   width: 170px;
 }
 
+.table-card th:nth-child(1),
+.table-card td:nth-child(1) {
+  width: 48px;
+}
+
+.table-card th:nth-child(2),
+.table-card td:nth-child(2) {
+  width: 180px;
+}
+
+.table-card th:nth-child(3),
+.table-card td:nth-child(3) {
+  width: 140px;
+}
+
+.table-card th:nth-child(4),
+.table-card td:nth-child(4) {
+  width: 150px;
+}
+
+.table-card th:nth-child(5),
+.table-card td:nth-child(5) {
+  width: auto;
+}
+
+.table-card th:nth-child(6),
+.table-card td:nth-child(6) {
+  width: 170px;
+}
+
 tbody tr:hover {
   background: rgba(255, 212, 71, 0.14);
 }
