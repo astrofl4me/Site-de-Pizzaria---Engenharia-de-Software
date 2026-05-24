@@ -6,6 +6,7 @@ require("dotenv").config();
 const clienteRoutes = require("./routes/clienteRoutes");
 const produtoRoutes = require("./routes/produtoRoutes");
 const pagamentoRoutes = require("./routes/pagamentoRoutes");
+const pedidoRoutes = require("./routes/pedidoRoutes");
 const { testConnection } = require("./db");
 
 const app = express();
@@ -24,6 +25,7 @@ app.get("/api/health", (request, response) => {
 app.use("/api/clientes", clienteRoutes);
 app.use("/api/produtos", produtoRoutes);
 app.use("/api/pagamentos", pagamentoRoutes);
+app.use("/api/pedidos", pedidoRoutes);
 
 app.use((request, response) => {
   response.status(404).json({ erro: "Rota não encontrada." });

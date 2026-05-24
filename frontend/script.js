@@ -1,6 +1,7 @@
 const API_URL = "/api/clientes";
 const PRODUTOS_API_URL = "/api/produtos";
 const PAGAMENTOS_API_URL = "/api/pagamentos";
+const PEDIDOS_API_URL = "/api/pedidos";
 
 const form = document.getElementById("clienteForm");
 const clienteIdInput = document.getElementById("clienteId");
@@ -46,6 +47,19 @@ const btnRecarregarPagamentos = document.getElementById("btnRecarregarPagamentos
 const pagamentosTabela = document.getElementById("pagamentosTabela");
 const pagamentoContador = document.getElementById("pagamentoContador");
 const pagamentoAlerta = document.getElementById("pagamentoAlerta");
+const pedidoForm = document.getElementById("pedidoForm");
+const pedidoIdInput = document.getElementById("pedidoId");
+const pedidoItensInput = document.getElementById("pedidoItens");
+const pedidoStatusInput = document.getElementById("pedidoStatus");
+const pedidoValorInput = document.getElementById("pedidoValor");
+const pedidoDataInput = document.getElementById("pedidoData");
+const pedidoHorarioInput = document.getElementById("pedidoHorario");
+const btnSalvarPedido = document.getElementById("btnSalvarPedido");
+const btnLimparPedido = document.getElementById("btnLimparPedido");
+const btnRecarregarPedidos = document.getElementById("btnRecarregarPedidos");
+const pedidosTabela = document.getElementById("pedidosTabela");
+const pedidoContador = document.getElementById("pedidoContador");
+const pedidoAlerta = document.getElementById("pedidoAlerta");
 
 let clientes = [];
 let alertaTimer = null;
@@ -56,6 +70,9 @@ let produtosCarregados = false;
 let pagamentoAlertaTimer = null;
 let pagamentos = [];
 let pagamentosCarregados = false;
+let pedidoAlertaTimer = null;
+let pedidos = [];
+let pedidosCarregados = false;
 
 function apenasNumeros(valor) {
   return String(valor || "").replace(/\D/g, "");
@@ -110,6 +127,21 @@ function formatarMoeda(valor) {
   });
 }
 
+function formatarData(dataISO) {
+  const partes = String(dataISO || "").slice(0, 10).split("-");
+
+  if (partes.length !== 3) {
+    return "-";
+  }
+
+  const [ano, mes, dia] = partes;
+  return `${dia}/${mes}/${ano}`;
+}
+
+function formatarHorario(horario) {
+  return String(horario || "").slice(0, 5) || "-";
+}
+
 function mostrarAlertaProduto(mensagem, tipo = "success") {
   clearTimeout(produtoAlertaTimer);
   produtoAlerta.textContent = mensagem;
@@ -129,6 +161,17 @@ function mostrarAlertaPagamento(mensagem, tipo = "success") {
   pagamentoAlertaTimer = setTimeout(() => {
     pagamentoAlerta.className = "alert";
     pagamentoAlerta.textContent = "";
+  }, 3000);
+}
+
+function mostrarAlertaPedido(mensagem, tipo = "success") {
+  clearTimeout(pedidoAlertaTimer);
+  pedidoAlerta.textContent = mensagem;
+  pedidoAlerta.className = `alert show ${tipo}`;
+
+  pedidoAlertaTimer = setTimeout(() => {
+    pedidoAlerta.className = "alert";
+    pedidoAlerta.textContent = "";
   }, 3000);
 }
 
@@ -256,6 +299,10 @@ function mostrarTela(nomeTela) {
     carregarProdutos();
   }
 
+  if (nomeTela === "pedidos" && !pedidosCarregados) {
+    carregarPedidos();
+  }
+
   if (nomeTela === "pagamento" && !pagamentosCarregados) {
     carregarPagamentos();
   }
@@ -361,6 +408,172 @@ function preencherProdutoFormulario(produto) {
   produtoDescricaoInput.value = produto.descricao;
   btnSalvarProduto.textContent = "Atualizar";
   produtoNomeInput.focus();
+}
+
+function definirDataHoraAtualPedido() {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const dia = String(agora.getDate()).padStart(2, "0");
+  const hora = String(agora.getHours()).padStart(2, "0");
+  const minuto = String(agora.getMinutes()).padStart(2, "0");
+
+  pedidoDataInput.value = `${ano}-${mes}-${dia}`;
+  pedidoHorarioInput.value = `${hora}:${minuto}`;
+}
+
+function obterDadosPedido() {
+  return {
+    itens: pedidoItensInput.value.trim(),
+    status: pedidoStatusInput.value,
+    valor: Number(pedidoValorInput.value),
+    data: pedidoDataInput.value,
+    horario: pedidoHorarioInput.value
+  };
+}
+
+function validarPedido(pedido) {
+  if (pedido.itens.length < 2) {
+    return "Informe os itens do pedido.";
+  }
+
+  if (!pedido.status) {
+    return "Selecione o status do pedido.";
+  }
+
+  if (!Number.isFinite(pedido.valor) || pedido.valor <= 0) {
+    return "Informe um valor valido.";
+  }
+
+  if (!pedido.data) {
+    return "Informe a data do pedido.";
+  }
+
+  if (!pedido.horario) {
+    return "Informe o horario do pedido.";
+  }
+
+  return "";
+}
+
+function resetarPedidoFormulario() {
+  pedidoForm.reset();
+  pedidoIdInput.value = "";
+  btnSalvarPedido.textContent = "Inserir";
+  definirDataHoraAtualPedido();
+  pedidoItensInput.focus();
+}
+
+function renderizarPedidos() {
+  pedidoContador.textContent = `${pedidos.length} pedido${pedidos.length === 1 ? "" : "s"} cadastrado${pedidos.length === 1 ? "" : "s"}`;
+
+  if (pedidos.length === 0) {
+    pedidosTabela.innerHTML = '<tr><td colspan="7" class="empty">Nenhum pedido cadastrado ainda.</td></tr>';
+    return;
+  }
+
+  pedidosTabela.innerHTML = pedidos.map((pedido) => `
+    <tr>
+      <td>${pedido.id}</td>
+      <td>${escaparHTML(pedido.itens)}</td>
+      <td>${escaparHTML(pedido.status)}</td>
+      <td>${formatarMoeda(pedido.valor)}</td>
+      <td>${formatarData(pedido.data)}</td>
+      <td>${formatarHorario(pedido.horario)}</td>
+      <td>
+        <div class="cell-actions">
+          <button type="button" class="btn btn-edit" data-pedido-action="edit" data-id="${pedido.id}">Editar</button>
+          <button type="button" class="btn btn-delete" data-pedido-action="delete" data-id="${pedido.id}">Remover</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+}
+
+async function carregarPedidos() {
+  try {
+    pedidoContador.textContent = "Carregando pedidos...";
+    const response = await fetch(PEDIDOS_API_URL);
+    pedidos = await tratarResposta(response);
+    pedidosCarregados = true;
+    renderizarPedidos();
+  } catch (error) {
+    pedidos = [];
+    pedidosCarregados = false;
+    renderizarPedidos();
+    mostrarAlertaPedido(error.message, "error");
+  }
+}
+
+function preencherPedidoFormulario(pedido) {
+  pedidoIdInput.value = pedido.id;
+  pedidoItensInput.value = pedido.itens;
+  pedidoStatusInput.value = pedido.status;
+  pedidoValorInput.value = pedido.valor;
+  pedidoDataInput.value = pedido.data;
+  pedidoHorarioInput.value = formatarHorario(pedido.horario);
+  btnSalvarPedido.textContent = "Atualizar";
+  pedidoItensInput.focus();
+}
+
+async function salvarPedido(event) {
+  event.preventDefault();
+
+  const pedido = obterDadosPedido();
+  const erro = validarPedido(pedido);
+
+  if (erro) {
+    mostrarAlertaPedido(erro, "error");
+    return;
+  }
+
+  const id = pedidoIdInput.value;
+  const editando = Boolean(id);
+
+  try {
+    btnSalvarPedido.disabled = true;
+    btnSalvarPedido.textContent = editando ? "Atualizando..." : "Inserindo...";
+
+    const response = await fetch(editando ? `${PEDIDOS_API_URL}/${id}` : PEDIDOS_API_URL, {
+      method: editando ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(pedido)
+    });
+
+    await tratarResposta(response);
+    await carregarPedidos();
+    resetarPedidoFormulario();
+    mostrarAlertaPedido(editando ? "Pedido atualizado com sucesso." : "Pedido cadastrado com sucesso.");
+  } catch (error) {
+    btnSalvarPedido.textContent = editando ? "Atualizar" : "Inserir";
+    mostrarAlertaPedido(error.message, "error");
+  } finally {
+    btnSalvarPedido.disabled = false;
+  }
+}
+
+async function removerPedido(id) {
+  const pedido = pedidos.find((item) => Number(item.id) === Number(id));
+  const itens = pedido ? pedido.itens : "este pedido";
+
+  if (!confirm(`Deseja remover ${itens}?`)) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${PEDIDOS_API_URL}/${id}`, {
+      method: "DELETE"
+    });
+
+    await tratarResposta(response);
+    await carregarPedidos();
+    resetarPedidoFormulario();
+    mostrarAlertaPedido("Pedido removido com sucesso.");
+  } catch (error) {
+    mostrarAlertaPedido(error.message, "error");
+  }
 }
 
 function normalizarTroco(tipo, troco) {
@@ -723,6 +936,34 @@ produtosTabela.addEventListener("click", (event) => {
   }
 });
 
+pedidoForm.addEventListener("submit", salvarPedido);
+
+btnLimparPedido.addEventListener("click", resetarPedidoFormulario);
+
+btnRecarregarPedidos.addEventListener("click", () => {
+  carregarPedidos();
+  mostrarAlertaPedido("Tabela atualizada.");
+});
+
+pedidosTabela.addEventListener("click", (event) => {
+  const botao = event.target.closest("button[data-pedido-action]");
+
+  if (!botao) {
+    return;
+  }
+
+  const id = Number(botao.dataset.id);
+  const pedido = pedidos.find((item) => Number(item.id) === id);
+
+  if (botao.dataset.pedidoAction === "edit" && pedido) {
+    preencherPedidoFormulario(pedido);
+  }
+
+  if (botao.dataset.pedidoAction === "delete") {
+    removerPedido(id);
+  }
+});
+
 pagamentoForm.addEventListener("submit", salvarPagamento);
 
 btnLimparPagamento.addEventListener("click", resetarPagamentoFormulario);
@@ -764,5 +1005,7 @@ telefoneInput.addEventListener("input", () => {
 document.addEventListener("DOMContentLoaded", () => {
   mostrarTela("inicial");
   renderizarProdutos();
+  renderizarPedidos();
+  definirDataHoraAtualPedido();
   atualizarCampoTroco();
 });
