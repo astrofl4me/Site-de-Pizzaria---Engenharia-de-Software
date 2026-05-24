@@ -18,6 +18,8 @@ Atualmente, o sistema permite:
 - cadastrar produtos do cardapio;
 - listar produtos por categoria;
 - editar e remover produtos;
+- cadastrar pagamentos;
+- listar, editar e remover pagamentos;
 - salvar os dados em um banco MySQL.
 
 Algumas telas ja aparecem no menu, mas ainda estao preparadas como modulos futuros:
@@ -72,7 +74,7 @@ project/
 
 - `frontend/`: parte visual do sistema, aquilo que aparece no navegador.
 - `backend/`: parte responsavel por receber pedidos do frontend e conversar com o banco.
-- `database.sql`: arquivo usado para criar o banco e as tabelas de clientes e produtos.
+- `database.sql`: arquivo usado para criar o banco e as tabelas de clientes, produtos e pagamentos.
 - `fontes/` e `icones/`: arquivos visuais usados no layout.
 - `.gitignore`: evita subir arquivos sensiveis ou pesados para o GitHub.
 - `README.md`: este guia.
@@ -157,7 +159,7 @@ Depois digite a senha do seu MySQL.
 3. Abra o arquivo `database.sql`.
 4. Execute o script.
 
-Esse script cria o banco `surunga_slice` e as tabelas `clientes` e `produtos`.
+Esse script cria o banco `surunga_slice` e as tabelas `clientes`, `produtos` e `pagamentos`.
 
 ---
 
@@ -262,6 +264,11 @@ GET    /api/produtos
 POST   /api/produtos
 PUT    /api/produtos/:id
 DELETE /api/produtos/:id
+
+GET    /api/pagamentos
+POST   /api/pagamentos
+PUT    /api/pagamentos/:id
+DELETE /api/pagamentos/:id
 ```
 
 Para testar se o servidor esta funcionando, abra:
@@ -418,13 +425,13 @@ Concluido ate o momento:
 - Navegacao entre modulos
 - CRUD de clientes
 - CRUD de produtos/cardapio
+- CRUD de pagamentos
 - Integracao com MySQL
 - Layout personalizado da pizzaria
 
 Planejado para o futuro:
 
 - Modulo de pedidos
-- Modulo de pagamentos
 - Modulo de funcionarios
 
 ---

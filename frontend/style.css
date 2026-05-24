@@ -352,7 +352,8 @@ p {
   align-items: start;
 }
 
-.product-layout {
+.product-layout,
+.payment-layout {
   display: grid;
   grid-template-columns: minmax(300px, 360px) minmax(640px, 1fr);
   gap: 24px;
@@ -363,7 +364,8 @@ p {
   padding: 22px;
 }
 
-.product-form {
+.product-form,
+.payment-form {
   padding: 22px;
 }
 
@@ -372,7 +374,8 @@ p {
   min-width: 0;
 }
 
-.menu-board {
+.menu-board,
+.payment-board {
   overflow: hidden;
   min-width: 0;
 }
@@ -586,6 +589,36 @@ table {
   width: 170px;
 }
 
+.payments-table th:nth-child(1),
+.payments-table td:nth-child(1) {
+  width: 42px;
+}
+
+.payments-table th:nth-child(2),
+.payments-table td:nth-child(2) {
+  width: 180px;
+}
+
+.payments-table th:nth-child(3),
+.payments-table td:nth-child(3) {
+  width: 110px;
+}
+
+.payments-table th:nth-child(4),
+.payments-table td:nth-child(4) {
+  width: 140px;
+}
+
+.payments-table th:nth-child(5),
+.payments-table td:nth-child(5) {
+  width: auto;
+}
+
+.payments-table th:nth-child(6),
+.payments-table td:nth-child(6) {
+  width: 170px;
+}
+
 th,
 td {
   padding: 14px 12px;
@@ -681,7 +714,8 @@ tbody tr:hover {
 /* Responsividade simples para notebook, tablet e celular */
 @media (max-width: 1180px) {
   .content-grid,
-  .product-layout {
+  .product-layout,
+  .payment-layout {
     grid-template-columns: 1fr;
   }
 }
