@@ -9,15 +9,14 @@ CREATE TABLE IF NOT EXISTS clientes (
   nome VARCHAR(120) NOT NULL,
   cpf VARCHAR(14) NOT NULL,
   telefone VARCHAR(20) NOT NULL,
-  endereco VARCHAR(180) NOT NULL,
-  cep VARCHAR(9) NOT NULL,
-  estado CHAR(2) NOT NULL,
+  email VARCHAR(120) NOT NULL,
   criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE KEY uk_clientes_cpf (cpf),
+  UNIQUE KEY uk_clientes_email (email),
   CONSTRAINT chk_clientes_nome CHECK (CHAR_LENGTH(TRIM(nome)) >= 3),
-  CONSTRAINT chk_clientes_estado CHECK (CHAR_LENGTH(TRIM(estado)) = 2)
+  CONSTRAINT chk_clientes_email CHECK (email LIKE '%_@_%._%')
 );
 
 CREATE TABLE IF NOT EXISTS produtos (

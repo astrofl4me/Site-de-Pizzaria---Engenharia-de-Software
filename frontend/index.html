@@ -88,49 +88,8 @@
           </div>
 
           <div class="field-group">
-            <label for="endereco">Endere&ccedil;o</label>
-            <input id="endereco" name="endereco" type="text" placeholder="Rua, n&uacute;mero e bairro" maxlength="180" required>
-          </div>
-
-          <div class="form-row">
-            <div class="field-group">
-              <label for="cep">CEP</label>
-              <input id="cep" name="cep" type="text" placeholder="00000-000" maxlength="9" required>
-            </div>
-
-            <div class="field-group small">
-              <label for="estado">Estado</label>
-              <select id="estado" name="estado" required>
-                <option value="">Selecione</option>
-                <option value="AC">AC - Acre</option>
-                <option value="AL">AL - Alagoas</option>
-                <option value="AP">AP - Amap&aacute;</option>
-                <option value="AM">AM - Amazonas</option>
-                <option value="BA">BA - Bahia</option>
-                <option value="CE">CE - Cear&aacute;</option>
-                <option value="DF">DF - Distrito Federal</option>
-                <option value="ES">ES - Esp&iacute;rito Santo</option>
-                <option value="GO">GO - Goi&aacute;s</option>
-                <option value="MA">MA - Maranh&atilde;o</option>
-                <option value="MT">MT - Mato Grosso</option>
-                <option value="MS">MS - Mato Grosso do Sul</option>
-                <option value="MG">MG - Minas Gerais</option>
-                <option value="PA">PA - Par&aacute;</option>
-                <option value="PB">PB - Para&iacute;ba</option>
-                <option value="PR">PR - Paran&aacute;</option>
-                <option value="PE">PE - Pernambuco</option>
-                <option value="PI">PI - Piau&iacute;</option>
-                <option value="RJ">RJ - Rio de Janeiro</option>
-                <option value="RN">RN - Rio Grande do Norte</option>
-                <option value="RS">RS - Rio Grande do Sul</option>
-                <option value="RO">RO - Rond&ocirc;nia</option>
-                <option value="RR">RR - Roraima</option>
-                <option value="SC">SC - Santa Catarina</option>
-                <option value="SP">SP - S&atilde;o Paulo</option>
-                <option value="SE">SE - Sergipe</option>
-                <option value="TO">TO - Tocantins</option>
-              </select>
-            </div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="exemplo@email.com" maxlength="120" required>
           </div>
 
           <div class="actions">
@@ -158,15 +117,13 @@
                   <th>Nome</th>
                   <th>CPF</th>
                   <th>Telefone</th>
-                  <th>Endere&ccedil;o</th>
-                  <th>CEP</th>
-                  <th>Estado</th>
+                  <th>Email</th>
                   <th>A&ccedil;&otilde;es</th>
                 </tr>
               </thead>
               <tbody id="clientesTabela">
                 <tr>
-                  <td colspan="8" class="empty">Carregando...</td>
+                  <td colspan="6" class="empty">Carregando...</td>
                 </tr>
               </tbody>
             </table>
