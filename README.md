@@ -24,7 +24,6 @@ Atualmente, o sistema permite:
 
 Algumas telas ja aparecem no menu, mas ainda estao preparadas como modulos futuros:
 
-- Pedidos
 - Funcionarios
 
 ## Tecnologias usadas
