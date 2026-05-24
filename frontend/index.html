@@ -132,11 +132,96 @@
       </section>
     </section>
 
-    <section id="tela-pedidos" class="app-screen placeholder-screen" hidden>
-      <div class="placeholder-card app-card">
-        <h1>Pedidos</h1>
-        <p>Esta tela ainda ser&aacute; configurada.</p>
-      </div>
+    <section id="tela-pedidos" class="app-screen" hidden>
+      <section class="screen-heading">
+        <div>
+          <h1>Pedidos</h1>
+        </div>
+      </section>
+
+      <section class="order-layout" aria-label="Cadastro e listagem de pedidos">
+        <form id="pedidoForm" class="order-form app-card" autocomplete="off">
+          <div class="section-title">
+            <h2>Novo pedido</h2>
+          </div>
+
+          <input type="hidden" id="pedidoId">
+
+          <div class="field-group">
+            <label for="pedidoItens">Itens</label>
+            <textarea id="pedidoItens" name="pedidoItens" placeholder="Ex: 1 Calabresa, 1 Coca-Cola" maxlength="300" required></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="pedidoStatus">Status</label>
+              <select id="pedidoStatus" name="pedidoStatus" required>
+                <option value="">Selecione</option>
+                <option value="Recebido">Recebido</option>
+                <option value="Em preparo">Em preparo</option>
+                <option value="Saiu para entrega">Saiu para entrega</option>
+                <option value="Entregue">Entregue</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="pedidoValor">Valor</label>
+              <input id="pedidoValor" name="pedidoValor" type="number" min="0" step="0.01" placeholder="Ex: 89.90" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="pedidoData">Data</label>
+              <input id="pedidoData" name="pedidoData" type="date" required>
+            </div>
+
+            <div class="field-group">
+              <label for="pedidoHorario">Horario</label>
+              <input id="pedidoHorario" name="pedidoHorario" type="time" required>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" id="btnSalvarPedido" class="btn btn-primary">Inserir</button>
+            <button type="button" id="btnLimparPedido" class="btn btn-secondary">Limpar</button>
+          </div>
+        </form>
+
+        <section class="order-board app-card">
+          <div class="table-header">
+            <div class="section-title">
+              <h2>Pedidos cadastrados</h2>
+              <p id="pedidoContador">0 pedidos cadastrados</p>
+            </div>
+            <button type="button" id="btnRecarregarPedidos" class="btn btn-light">Atualizar</button>
+          </div>
+
+          <div id="pedidoAlerta" class="alert" role="status" aria-live="polite"></div>
+
+          <div class="table-wrap orders-table-wrap">
+            <table class="orders-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Itens</th>
+                  <th>Status</th>
+                  <th>Valor</th>
+                  <th>Data</th>
+                  <th>Horario</th>
+                  <th>Acoes</th>
+                </tr>
+              </thead>
+              <tbody id="pedidosTabela">
+                <tr>
+                  <td colspan="7" class="empty">Nenhum pedido cadastrado ainda.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
     </section>
 
     <section id="tela-produtos" class="app-screen" hidden>

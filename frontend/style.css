@@ -353,7 +353,8 @@ p {
 }
 
 .product-layout,
-.payment-layout {
+.payment-layout,
+.order-layout {
   display: grid;
   grid-template-columns: minmax(300px, 360px) minmax(640px, 1fr);
   gap: 24px;
@@ -365,7 +366,8 @@ p {
 }
 
 .product-form,
-.payment-form {
+.payment-form,
+.order-form {
   padding: 22px;
 }
 
@@ -375,7 +377,8 @@ p {
 }
 
 .menu-board,
-.payment-board {
+.payment-board,
+.order-board {
   overflow: hidden;
   min-width: 0;
 }
@@ -469,9 +472,9 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
   width: 100%;
-  height: 46px;
   padding: 0 13px;
   color: var(--black);
   font: inherit;
@@ -482,8 +485,21 @@ select {
   outline: none;
 }
 
+input,
+select {
+  height: 46px;
+}
+
+textarea {
+  min-height: 110px;
+  padding-top: 12px;
+  line-height: 1.35;
+  resize: vertical;
+}
+
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   background: var(--white);
   box-shadow: 0 0 0 4px rgba(255, 212, 71, 0.42);
 }
@@ -619,6 +635,38 @@ table {
   width: 170px;
 }
 
+.orders-table th:nth-child(1),
+.orders-table td:nth-child(1) {
+  width: 42px;
+}
+
+.orders-table th:nth-child(2),
+.orders-table td:nth-child(2) {
+  width: auto;
+}
+
+.orders-table th:nth-child(3),
+.orders-table td:nth-child(3) {
+  width: 140px;
+}
+
+.orders-table th:nth-child(4),
+.orders-table td:nth-child(4) {
+  width: 100px;
+}
+
+.orders-table th:nth-child(5),
+.orders-table td:nth-child(5),
+.orders-table th:nth-child(6),
+.orders-table td:nth-child(6) {
+  width: 100px;
+}
+
+.orders-table th:nth-child(7),
+.orders-table td:nth-child(7) {
+  width: 170px;
+}
+
 th,
 td {
   padding: 14px 12px;
@@ -715,7 +763,8 @@ tbody tr:hover {
 @media (max-width: 1180px) {
   .content-grid,
   .product-layout,
-  .payment-layout {
+  .payment-layout,
+  .order-layout {
     grid-template-columns: 1fr;
   }
 }
