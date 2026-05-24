@@ -278,11 +278,88 @@
       </section>
     </section>
 
-    <section id="tela-pagamento" class="app-screen placeholder-screen" hidden>
-      <div class="placeholder-card app-card">
-        <h1>Pagamento</h1>
-        <p>Esta tela ainda ser&aacute; configurada.</p>
-      </div>
+    <section id="tela-pagamento" class="app-screen" hidden>
+      <section class="screen-heading">
+        <div>
+          <h1>Pagamentos</h1>
+        </div>
+      </section>
+
+      <section class="payment-layout" aria-label="Cadastro e listagem de pagamentos">
+        <form id="pagamentoForm" class="payment-form app-card" autocomplete="off">
+          <div class="section-title">
+            <h2>Novo pagamento</h2>
+          </div>
+
+          <input type="hidden" id="pagamentoId">
+
+          <div class="field-group">
+            <label for="pagamentoCliente">Nome do cliente</label>
+            <input id="pagamentoCliente" name="pagamentoCliente" type="text" placeholder="Ex: Nicole" maxlength="120" required>
+          </div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="pagamentoValor">Valor do pagamento</label>
+              <input id="pagamentoValor" name="pagamentoValor" type="number" min="0" step="0.01" placeholder="Ex: 85.90" required>
+            </div>
+
+            <div class="field-group">
+              <label for="pagamentoTipo">Tipo de pagamento</label>
+              <select id="pagamentoTipo" name="pagamentoTipo" required>
+                <option value="">Selecione</option>
+                <option value="VR">VR</option>
+                <option value="Cartao credito">Cart&atilde;o cr&eacute;dito</option>
+                <option value="Cartao debito">Cart&atilde;o d&eacute;bito</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Pix">Pix</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="pagamentoTroco">Troco</label>
+            <input id="pagamentoTroco" name="pagamentoTroco" type="text" placeholder="Sem necessidade de troco">
+          </div>
+
+          <div class="actions">
+            <button type="submit" id="btnSalvarPagamento" class="btn btn-primary">Inserir</button>
+            <button type="button" id="btnLimparPagamento" class="btn btn-secondary">Limpar</button>
+          </div>
+        </form>
+
+        <section class="payment-board app-card">
+          <div class="table-header">
+            <div class="section-title">
+              <h2>Pagamentos cadastrados</h2>
+              <p id="pagamentoContador">0 pagamentos cadastrados</p>
+            </div>
+            <button type="button" id="btnRecarregarPagamentos" class="btn btn-light">Atualizar</button>
+          </div>
+
+          <div id="pagamentoAlerta" class="alert" role="status" aria-live="polite"></div>
+
+          <div class="table-wrap payments-table-wrap">
+            <table class="payments-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Valor</th>
+                  <th>Tipo</th>
+                  <th>Troco</th>
+                  <th>Acoes</th>
+                </tr>
+              </thead>
+              <tbody id="pagamentosTabela">
+                <tr>
+                  <td colspan="6" class="empty">Nenhum pagamento cadastrado ainda.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
     </section>
 
     <section id="tela-funcionarios" class="app-screen placeholder-screen" hidden>

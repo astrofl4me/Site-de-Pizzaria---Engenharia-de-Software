@@ -1,5 +1,6 @@
 const API_URL = "/api/clientes";
 const PRODUTOS_API_URL = "/api/produtos";
+const PAGAMENTOS_API_URL = "/api/pagamentos";
 
 const form = document.getElementById("clienteForm");
 const clienteIdInput = document.getElementById("clienteId");
@@ -35,6 +36,18 @@ const produtoAlerta = document.getElementById("produtoAlerta");
 const listaSabores = document.getElementById("listaSabores");
 const listaBebidas = document.getElementById("listaBebidas");
 const listaSobremesas = document.getElementById("listaSobremesas");
+const pagamentoForm = document.getElementById("pagamentoForm");
+const pagamentoIdInput = document.getElementById("pagamentoId");
+const pagamentoClienteInput = document.getElementById("pagamentoCliente");
+const pagamentoValorInput = document.getElementById("pagamentoValor");
+const pagamentoTipoInput = document.getElementById("pagamentoTipo");
+const pagamentoTrocoInput = document.getElementById("pagamentoTroco");
+const btnSalvarPagamento = document.getElementById("btnSalvarPagamento");
+const btnLimparPagamento = document.getElementById("btnLimparPagamento");
+const btnRecarregarPagamentos = document.getElementById("btnRecarregarPagamentos");
+const pagamentosTabela = document.getElementById("pagamentosTabela");
+const pagamentoContador = document.getElementById("pagamentoContador");
+const pagamentoAlerta = document.getElementById("pagamentoAlerta");
 
 let clientes = [];
 let alertaTimer = null;
@@ -42,6 +55,9 @@ let clientesCarregados = false;
 let produtoAlertaTimer = null;
 let produtos = [];
 let produtosCarregados = false;
+let pagamentoAlertaTimer = null;
+let pagamentos = [];
+let pagamentosCarregados = false;
 
 function apenasNumeros(valor) {
   return String(valor || "").replace(/\D/g, "");
@@ -110,6 +126,17 @@ function mostrarAlertaProduto(mensagem, tipo = "success") {
   produtoAlertaTimer = setTimeout(() => {
     produtoAlerta.className = "alert";
     produtoAlerta.textContent = "";
+  }, 3000);
+}
+
+function mostrarAlertaPagamento(mensagem, tipo = "success") {
+  clearTimeout(pagamentoAlertaTimer);
+  pagamentoAlerta.textContent = mensagem;
+  pagamentoAlerta.className = `alert show ${tipo}`;
+
+  pagamentoAlertaTimer = setTimeout(() => {
+    pagamentoAlerta.className = "alert";
+    pagamentoAlerta.textContent = "";
   }, 3000);
 }
 
@@ -250,6 +277,10 @@ function mostrarTela(nomeTela) {
   if (nomeTela === "produtos" && !produtosCarregados) {
     carregarProdutos();
   }
+
+  if (nomeTela === "pagamento" && !pagamentosCarregados) {
+    carregarPagamentos();
+  }
 }
 
 function obterDadosProduto() {
@@ -354,6 +385,120 @@ function preencherProdutoFormulario(produto) {
   produtoNomeInput.focus();
 }
 
+function normalizarTroco(tipo, troco) {
+  if (tipo !== "Dinheiro") {
+    return "Sem necessidade de troco";
+  }
+
+  const trocoLimpo = String(troco || "").trim();
+  const valorTroco = Number(trocoLimpo.replace(",", "."));
+
+  if (Number.isFinite(valorTroco) && valorTroco > 0) {
+    return formatarMoeda(valorTroco);
+  }
+
+  return trocoLimpo;
+}
+
+function atualizarCampoTroco() {
+  const pagamentoEmDinheiro = pagamentoTipoInput.value === "Dinheiro";
+  pagamentoTrocoInput.disabled = !pagamentoEmDinheiro;
+
+  if (!pagamentoEmDinheiro) {
+    pagamentoTrocoInput.value = "Sem necessidade de troco";
+  } else if (pagamentoTrocoInput.value === "Sem necessidade de troco") {
+    pagamentoTrocoInput.value = "";
+  }
+}
+
+function obterDadosPagamento() {
+  return {
+    nome_cliente: pagamentoClienteInput.value.trim(),
+    valor_pagamento: Number(pagamentoValorInput.value),
+    tipo_pagamento: pagamentoTipoInput.value,
+    troco: normalizarTroco(pagamentoTipoInput.value, pagamentoTrocoInput.value)
+  };
+}
+
+function validarPagamento(pagamento) {
+  if (pagamento.nome_cliente.length < 3) {
+    return "Informe o nome do cliente.";
+  }
+
+  if (!Number.isFinite(pagamento.valor_pagamento) || pagamento.valor_pagamento <= 0) {
+    return "Informe um valor de pagamento valido.";
+  }
+
+  if (!pagamento.tipo_pagamento) {
+    return "Selecione o tipo de pagamento.";
+  }
+
+  if (pagamento.tipo_pagamento === "Dinheiro" && pagamento.troco.length === 0) {
+    return "Informe o troco ou escreva que nao precisa.";
+  }
+
+  return "";
+}
+
+function resetarPagamentoFormulario() {
+  pagamentoForm.reset();
+  pagamentoIdInput.value = "";
+  btnSalvarPagamento.textContent = "Inserir";
+  atualizarCampoTroco();
+  pagamentoClienteInput.focus();
+}
+
+function renderizarPagamentos() {
+  pagamentoContador.textContent = `${pagamentos.length} pagamento${pagamentos.length === 1 ? "" : "s"} cadastrado${pagamentos.length === 1 ? "" : "s"}`;
+
+  if (pagamentos.length === 0) {
+    pagamentosTabela.innerHTML = '<tr><td colspan="6" class="empty">Nenhum pagamento cadastrado ainda.</td></tr>';
+    return;
+  }
+
+  pagamentosTabela.innerHTML = pagamentos.map((pagamento) => `
+    <tr>
+      <td>${pagamento.id}</td>
+      <td>${escaparHTML(pagamento.nome_cliente)}</td>
+      <td>${formatarMoeda(pagamento.valor_pagamento)}</td>
+      <td>${escaparHTML(pagamento.tipo_pagamento)}</td>
+      <td>${escaparHTML(pagamento.troco)}</td>
+      <td>
+        <div class="cell-actions">
+          <button type="button" class="btn btn-edit" data-pagamento-action="edit" data-id="${pagamento.id}">Editar</button>
+          <button type="button" class="btn btn-delete" data-pagamento-action="delete" data-id="${pagamento.id}">Remover</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+}
+
+async function carregarPagamentos() {
+  try {
+    pagamentoContador.textContent = "Carregando pagamentos...";
+    const response = await fetch(PAGAMENTOS_API_URL);
+    pagamentos = await tratarResposta(response);
+    pagamentosCarregados = true;
+    renderizarPagamentos();
+  } catch (error) {
+    pagamentos = [];
+    pagamentosCarregados = false;
+    renderizarPagamentos();
+    mostrarAlertaPagamento(error.message, "error");
+  }
+}
+
+function preencherPagamentoFormulario(pagamento) {
+  pagamentoIdInput.value = pagamento.id;
+  pagamentoClienteInput.value = pagamento.nome_cliente;
+  pagamentoValorInput.value = pagamento.valor_pagamento;
+  pagamentoTipoInput.value = pagamento.tipo_pagamento;
+  pagamentoTrocoInput.value = pagamento.troco.replace(/^R\$\s*/i, "");
+  atualizarCampoTroco();
+  btnSalvarPagamento.textContent = "Atualizar";
+  pagamentoClienteInput.focus();
+}
+
 async function salvarProduto(event) {
   event.preventDefault();
 
@@ -412,6 +557,66 @@ async function removerProduto(id) {
     mostrarAlertaProduto("Produto removido com sucesso.");
   } catch (error) {
     mostrarAlertaProduto(error.message, "error");
+  }
+}
+
+async function salvarPagamento(event) {
+  event.preventDefault();
+
+  const pagamento = obterDadosPagamento();
+  const erro = validarPagamento(pagamento);
+
+  if (erro) {
+    mostrarAlertaPagamento(erro, "error");
+    return;
+  }
+
+  const id = pagamentoIdInput.value;
+  const editando = Boolean(id);
+
+  try {
+    btnSalvarPagamento.disabled = true;
+    btnSalvarPagamento.textContent = editando ? "Atualizando..." : "Inserindo...";
+
+    const response = await fetch(editando ? `${PAGAMENTOS_API_URL}/${id}` : PAGAMENTOS_API_URL, {
+      method: editando ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(pagamento)
+    });
+
+    await tratarResposta(response);
+    await carregarPagamentos();
+    resetarPagamentoFormulario();
+    mostrarAlertaPagamento(editando ? "Pagamento atualizado com sucesso." : "Pagamento cadastrado com sucesso.");
+  } catch (error) {
+    btnSalvarPagamento.textContent = editando ? "Atualizar" : "Inserir";
+    mostrarAlertaPagamento(error.message, "error");
+  } finally {
+    btnSalvarPagamento.disabled = false;
+  }
+}
+
+async function removerPagamento(id) {
+  const pagamento = pagamentos.find((item) => Number(item.id) === Number(id));
+  const nome = pagamento ? pagamento.nome_cliente : "este pagamento";
+
+  if (!confirm(`Deseja remover ${nome}?`)) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${PAGAMENTOS_API_URL}/${id}`, {
+      method: "DELETE"
+    });
+
+    await tratarResposta(response);
+    await carregarPagamentos();
+    resetarPagamentoFormulario();
+    mostrarAlertaPagamento("Pagamento removido com sucesso.");
+  } catch (error) {
+    mostrarAlertaPagamento(error.message, "error");
   }
 }
 
@@ -540,6 +745,36 @@ produtosTabela.addEventListener("click", (event) => {
   }
 });
 
+pagamentoForm.addEventListener("submit", salvarPagamento);
+
+btnLimparPagamento.addEventListener("click", resetarPagamentoFormulario);
+
+btnRecarregarPagamentos.addEventListener("click", () => {
+  carregarPagamentos();
+  mostrarAlertaPagamento("Tabela atualizada.");
+});
+
+pagamentoTipoInput.addEventListener("change", atualizarCampoTroco);
+
+pagamentosTabela.addEventListener("click", (event) => {
+  const botao = event.target.closest("button[data-pagamento-action]");
+
+  if (!botao) {
+    return;
+  }
+
+  const id = Number(botao.dataset.id);
+  const pagamento = pagamentos.find((item) => Number(item.id) === id);
+
+  if (botao.dataset.pagamentoAction === "edit" && pagamento) {
+    preencherPagamentoFormulario(pagamento);
+  }
+
+  if (botao.dataset.pagamentoAction === "delete") {
+    removerPagamento(id);
+  }
+});
+
 cpfInput.addEventListener("input", () => {
   cpfInput.value = formatarCPF(cpfInput.value);
 });
@@ -555,4 +790,5 @@ cepInput.addEventListener("input", () => {
 document.addEventListener("DOMContentLoaded", () => {
   mostrarTela("inicial");
   renderizarProdutos();
+  atualizarCampoTroco();
 });
