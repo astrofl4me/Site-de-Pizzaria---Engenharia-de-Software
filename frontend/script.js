@@ -2,6 +2,7 @@ const API_URL = "/api/clientes";
 const PRODUTOS_API_URL = "/api/produtos";
 const PAGAMENTOS_API_URL = "/api/pagamentos";
 const PEDIDOS_API_URL = "/api/pedidos";
+const FUNCIONARIOS_API_URL = "/api/funcionarios";
 
 const form = document.getElementById("clienteForm");
 const clienteIdInput = document.getElementById("clienteId");
@@ -60,6 +61,20 @@ const btnRecarregarPedidos = document.getElementById("btnRecarregarPedidos");
 const pedidosTabela = document.getElementById("pedidosTabela");
 const pedidoContador = document.getElementById("pedidoContador");
 const pedidoAlerta = document.getElementById("pedidoAlerta");
+const funcionariosForm = document.getElementById("funcionariosForm");
+const funcionariosIdInput = document.getElementById("funcionariosId");
+const funcionariosNomeInput = document.getElementById("funcionariosNome");
+const funcionariosNivelInput = document.getElementById("funcionariosNivel");
+const funcionariosSalarioInput = document.getElementById("funcionariosSalario");
+const funcionariosCargaInput = document.getElementById("funcionariosCarga");
+const btnSalvarFuncionarios = document.getElementById("btnSalvarFuncionarios");
+const btnLimparFuncionarios = document.getElementById("btnLimparFuncionarios");
+const btnRecarregarFuncionarios = document.getElementById("btnRecarregarFuncionarios");
+const funcionariosTabela = document.getElementById("funcionariosTabela");
+const funcionariosContador = document.getElementById("funcionariosContador");
+const funcionariosAlerta = document.getElementById("funcionariosAlerta");
+const funcionariosFormTitle = document.getElementById("funcionariosFormTitle");
+const funcionariosFormHint = document.getElementById("funcionariosFormHint");
 
 let clientes = [];
 let alertaTimer = null;
@@ -73,6 +88,9 @@ let pagamentosCarregados = false;
 let pedidoAlertaTimer = null;
 let pedidos = [];
 let pedidosCarregados = false;
+let funcionariosAlertaTimer = null;
+let funcionarios = [];
+let funcionariosCarregados = false;
 
 function apenasNumeros(valor) {
   return String(valor || "").replace(/\D/g, "");
@@ -306,6 +324,10 @@ function mostrarTela(nomeTela) {
   if (nomeTela === "pagamento" && !pagamentosCarregados) {
     carregarPagamentos();
   }
+
+  if (nomeTela === "funcionarios" && !funcionariosCarregados) {
+  carregarFuncionarios();
+}
 }
 
 function obterDadosProduto() {
@@ -1000,6 +1022,198 @@ cpfInput.addEventListener("input", () => {
 
 telefoneInput.addEventListener("input", () => {
   telefoneInput.value = formatarTelefone(telefoneInput.value);
+});
+
+function mostrarAlertaFuncionarios(mensagem, tipo = "success") {
+  clearTimeout(funcionariosAlertaTimer);
+  funcionariosAlerta.textContent = mensagem;
+  funcionariosAlerta.className = `alert show ${tipo}`;
+
+  funcionariosAlertaTimer = setTimeout(() => {
+    funcionariosAlerta.className = "alert";
+    funcionariosAlerta.textContent = "";
+  }, 3000);
+}
+
+function obterDadosFuncionarios() {
+  return {
+    nome_cargo:    funcionariosNomeInput.value.trim(),
+    nivel_cargo:   funcionariosNivelInput.value,
+    salario:       Number(funcionariosSalarioInput.value),
+    carga_horaria: Number(funcionariosCargaInput.value)
+  };
+}
+
+function validarFuncionarios(cargo) {
+  if (cargo.nome_cargo.length < 3) {
+    return "Informe um nome com pelo menos 3 caracteres.";
+  }
+
+  if (!cargo.nivel_cargo) {
+    return "Selecione o nível do cargo.";
+  }
+
+  if (!Number.isFinite(cargo.salario) || cargo.salario <= 0) {
+    return "Informe um salário válido.";
+  }
+
+  if (!Number.isFinite(cargo.carga_horaria) || cargo.carga_horaria < 1 || cargo.carga_horaria > 48) {
+    return "A carga horária deve estar entre 1 e 48 horas semanais (CLT).";
+  }
+
+  return "";
+}
+
+function resetarFuncionariosFormulario() {
+  funcionariosForm.reset();
+  funcionariosIdInput.value = "";
+  btnSalvarFuncionarios.textContent = "Inserir";
+  funcionariosFormTitle.textContent = "Novo cargo";
+  funcionariosFormHint.textContent = "";
+  funcionariosNomeInput.focus();
+}
+
+function preencherFuncionariosFormulario(cargo) {
+  funcionariosIdInput.value = cargo.id_cargo;
+  funcionariosNomeInput.value = cargo.nome_cargo;
+  funcionariosNivelInput.value = cargo.nivel_cargo;
+  funcionariosSalarioInput.value = cargo.salario;
+  funcionariosCargaInput.value = cargo.carga_horaria;
+  btnSalvarFuncionarios.textContent = "Atualizar";
+  funcionariosFormTitle.textContent = "Editar cargo";
+  funcionariosFormHint.textContent = `Alterando cadastro #${cargo.id_cargo}.`;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  funcionariosNomeInput.focus();
+}
+
+function renderizarFuncionarios() {
+  funcionariosContador.textContent = `${funcionarios.length} cargo${funcionarios.length === 1 ? "" : "s"} cadastrado${funcionarios.length === 1 ? "" : "s"}`;
+
+  if (funcionarios.length === 0) {
+    funcionariosTabela.innerHTML = '<tr><td colspan="6" class="empty">Nenhum cargo cadastrado ainda.</td></tr>';
+    return;
+  }
+
+  funcionariosTabela.innerHTML = funcionarios.map((cargo) => `
+    <tr>
+      <td>${cargo.id_cargo}</td>
+      <td>${escaparHTML(cargo.nome_cargo)}</td>
+      <td>${escaparHTML(cargo.nivel_cargo)}</td>
+      <td>${formatarMoeda(cargo.salario)}</td>
+      <td>${cargo.carga_horaria}h/sem</td>
+      <td>
+        <div class="cell-actions">
+          <button type="button" class="btn btn-edit" data-funcionarios-action="edit" data-id="${cargo.id_cargo}">Editar</button>
+          <button type="button" class="btn btn-delete" data-funcionarios-action="delete" data-id="${cargo.id_cargo}">Remover</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+}
+
+async function carregarFuncionarios() {
+  try {
+    funcionariosContador.textContent = "Carregando cargos...";
+    const response = await fetch(FUNCIONARIOS_API_URL);
+    funcionarios = await tratarResposta(response);
+    funcionariosCarregados = true;
+    renderizarFuncionarios();
+  } catch (error) {
+    funcionarios = [];
+    funcionariosCarregados = false;
+    renderizarFuncionarios();
+    mostrarAlertaFuncionarios(error.message, "error");
+  }
+}
+
+async function salvarFuncionario(event) {
+  event.preventDefault();
+
+  const cargo = obterDadosFuncionarios();
+  const erro = validarFuncionarios(cargo);
+
+  if (erro) {
+    mostrarAlertaFuncionarios(erro, "error");
+    return;
+  }
+
+  const id = funcionariosIdInput.value;
+  const editando = Boolean(id);
+
+  try {
+    btnSalvarFuncionarios.disabled = true;
+    btnSalvarFuncionarios.textContent = editando ? "Atualizando..." : "Inserindo...";
+
+    const response = await fetch(editando ? `${FUNCIONARIOS_API_URL}/${id}` : FUNCIONARIOS_API_URL, {
+      method: editando ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cargo)
+    });
+
+    await tratarResposta(response);
+    await carregarFuncionarios();
+    resetarFuncionariosFormulario();
+    mostrarAlertaFuncionarios(editando ? "Cargo atualizado com sucesso." : "Cargo inserido com sucesso.");
+  } catch (error) {
+    btnSalvarFuncionarios.textContent = editando ? "Atualizar" : "Inserir";
+    mostrarAlertaFuncionarios(error.message, "error");
+  } finally {
+    btnSalvarFuncionarios.disabled = false;
+  }
+}
+
+async function removerFuncionario(id) {
+  const cargo = funcionarios.find((item) => Number(item.id_cargo) === Number(id));
+  const nome = cargo ? cargo.nome_cargo : "este cargo";
+
+  if (!confirm(`Deseja remover ${nome}?`)) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${FUNCIONARIOS_API_URL}/${id}`, {
+      method: "DELETE"
+    });
+
+    await tratarResposta(response);
+    await carregarFuncionarios();
+
+    if (funcionariosIdInput.value === String(id)) {
+      resetarFuncionariosFormulario();
+    }
+
+    mostrarAlertaFuncionarios("Cargo removido com sucesso.");
+  } catch (error) {
+    mostrarAlertaFuncionarios(error.message, "error");
+  }
+}
+
+funcionariosForm.addEventListener("submit", salvarFuncionario);
+
+btnLimparFuncionarios.addEventListener("click", resetarFuncionariosFormulario);
+
+btnRecarregarFuncionarios.addEventListener("click", () => {
+  carregarFuncionarios();
+  mostrarAlertaFuncionarios("Tabela atualizada.");
+});
+
+funcionariosTabela.addEventListener("click", (event) => {
+  const botao = event.target.closest("button[data-funcionarios-action]");
+
+  if (!botao) {
+    return;
+  }
+
+  const id = Number(botao.dataset.id);
+  const cargo = funcionarios.find((item) => Number(item.id_cargo) === id);
+
+  if (botao.dataset.funcionariosAction === "edit" && cargo) {
+    preencherFuncionariosFormulario(cargo);
+  }
+
+  if (botao.dataset.funcionariosAction === "delete") {
+    removerFuncionario(id);
+  }
 });
 
 document.addEventListener("DOMContentLoaded", () => {

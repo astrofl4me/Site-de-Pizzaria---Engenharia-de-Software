@@ -404,12 +404,91 @@
       </section>
     </section>
 
-    <section id="tela-funcionarios" class="app-screen placeholder-screen" hidden>
-      <div class="placeholder-card app-card">
-        <h1>Funcionarios</h1>
-        <p>Esta tela ainda ser&aacute; configurada.</p>
+    <section id="tela-funcionarios" class="app-screen" hidden>
+  <section class="screen-heading">
+    <div>
+      <h1>Funcionários</h1>
+    </div>
+  </section>
+
+  <section class="content-grid" aria-label="Cadastro e listagem de cargos">
+    <form id="funcionariosForm" class="form-card app-card" autocomplete="off">
+      <div class="section-title">
+        <h2 id="funcionariosFormTitle">Novo cargo</h2>
+        <p id="funcionariosFormHint"></p>
+      </div>
+
+      <input type="hidden" id="funcionariosId">
+
+      <div class="field-group">
+        <label for="funcionariosNome">Nome do cargo</label>
+        <input id="funcionariosNome" name="funcionariosNome" type="text"
+               placeholder="Ex: Pizzaiolo" maxlength="80" required>
+      </div>
+
+      <div class="field-group">
+        <label for="funcionariosNivel">Nível</label>
+        <select id="funcionariosNivel" name="funcionariosNivel" required>
+          <option value="">Selecione</option>
+          <option value="Junior">Júnior</option>
+          <option value="Pleno">Pleno</option>
+          <option value="Senior">Sênior</option>
+          <option value="Gerente">Gerente</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group">
+          <label for="funcionariosSalario">Salário base (R$)</label>
+          <input id="funcionariosSalario" name="funcionariosSalario" type="number"
+                 min="0" step="0.01" placeholder="Ex: 2500.00" required>
+        </div>
+        <div class="field-group">
+          <label for="funcionariosCarga">Carga horária (h/sem)</label>
+          <input id="funcionariosCarga" name="funcionariosCarga" type="number"
+                 min="1" max="48" placeholder="Máx: 48h" required>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" id="btnSalvarFuncionarios" class="btn btn-primary">Inserir</button>
+        <button type="button" id="btnLimparFuncionarios" class="btn btn-secondary">Limpar</button>
+      </div>
+    </form>
+
+    <section class="table-card app-card">
+      <div class="table-header">
+        <div class="section-title">
+          <h2>Cargos cadastrados</h2>
+          <p id="funcionariosContador">Carregando...</p>
+        </div>
+        <button type="button" id="btnRecarregarFuncionarios" class="btn btn-light">Atualizar</button>
+      </div>
+
+      <div id="funcionariosAlerta" class="alert" role="status" aria-live="polite"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome do Cargo</th>
+              <th>Nível</th>
+              <th>Salário Base</th>
+              <th>Carga Horária</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="funcionariosTabela">
+            <tr>
+              <td colspan="6" class="empty">Carregando...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
+  </section>
+</section>
   </main>
 
   <script src="script.js"></script>

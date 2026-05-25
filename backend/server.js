@@ -7,6 +7,7 @@ const clienteRoutes = require("./routes/clienteRoutes");
 const produtoRoutes = require("./routes/produtoRoutes");
 const pagamentoRoutes = require("./routes/pagamentoRoutes");
 const pedidoRoutes = require("./routes/pedidoRoutes");
+const funcionariosRoutes = require("./routes/funcionariosRoutes");
 const { testConnection } = require("./db");
 
 const app = express();
@@ -26,6 +27,7 @@ app.use("/api/clientes", clienteRoutes);
 app.use("/api/produtos", produtoRoutes);
 app.use("/api/pagamentos", pagamentoRoutes);
 app.use("/api/pedidos", pedidoRoutes);
+app.use("/api/funcionarios", funcionariosRoutes);
 
 app.use((request, response) => {
   response.status(404).json({ erro: "Rota não encontrada." });

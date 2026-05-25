@@ -59,3 +59,14 @@ CREATE TABLE IF NOT EXISTS pedidos (
   CONSTRAINT chk_pedidos_itens CHECK (CHAR_LENGTH(TRIM(itens)) >= 2),
   CONSTRAINT chk_pedidos_valor CHECK (valor > 0)
 );
+
+CREATE TABLE IF NOT EXISTS cargo (
+  id_cargo      INT           NOT NULL AUTO_INCREMENT,
+  nome_cargo    VARCHAR(80)   NOT NULL,
+  nivel_cargo   ENUM('Junior','Pleno','Senior','Gerente') NOT NULL,
+  salario       DECIMAL(10,2) NOT NULL,
+  carga_horaria INT           NOT NULL,
+  PRIMARY KEY (id_cargo),
+  CONSTRAINT chk_cargo_salario       CHECK (salario > 0),
+  CONSTRAINT chk_cargo_carga_horaria CHECK (carga_horaria BETWEEN 1 AND 48)
+);
