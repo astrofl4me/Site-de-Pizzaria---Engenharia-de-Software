@@ -22,10 +22,6 @@ Atualmente, o sistema permite:
 - listar, editar e remover pagamentos;
 - salvar os dados em um banco MySQL.
 
-Algumas telas ja aparecem no menu, mas ainda estao preparadas como modulos futuros:
-
-- Funcionarios
-
 ## Tecnologias usadas
 
 Este projeto usa:
